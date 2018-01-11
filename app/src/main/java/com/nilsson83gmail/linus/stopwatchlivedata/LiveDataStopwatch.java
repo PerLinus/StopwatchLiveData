@@ -1,5 +1,6 @@
 package com.nilsson83gmail.linus.stopwatchlivedata;
 
+import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
@@ -11,11 +12,13 @@ import java.util.TimerTask;
  * Created by Linus on 2018-01-09.
  */
 
-public class LiveDataStopwatch extends ViewModel {
+public class LiveDataStopwatch extends ViewModel implements LifecycleObserver {
 
     private static final int ONE_SECOND = 1000;
 
     private boolean running;
+
+    private boolean onPauseRunning;
 
     private MutableLiveData<Long> stopwatch = new MutableLiveData<>();
 
@@ -47,6 +50,18 @@ public class LiveDataStopwatch extends ViewModel {
 
     public void setRunning(boolean running) {
         this.running = running;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public boolean isOnPauseRunning() {
+        return onPauseRunning;
+    }
+
+    public void setOnPauseRunning(boolean onPauseRunning) {
+        this.onPauseRunning = onPauseRunning;
     }
 }
 

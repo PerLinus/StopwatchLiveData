@@ -1,6 +1,10 @@
 package com.nilsson83gmail.linus.stopwatchlivedata;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -10,11 +14,11 @@ import android.widget.TextView;
 
 import java.util.Locale;
 
-public class Stopwatch extends AppCompatActivity {
+public class Stopwatch extends AppCompatActivity implements LifecycleObserver {
+
+
 
     private LiveDataStopwatch viewModel;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +28,7 @@ public class Stopwatch extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(LiveDataStopwatch.class);
 
         subscribe();
+        getLifecycle().addObserver(new LiveDataStopwatch());
     }
 
     private void subscribe() {
@@ -42,6 +47,19 @@ public class Stopwatch extends AppCompatActivity {
         viewModel.getStopwatch().observe(this,stopwatchObserver);
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    public void onPause() {
+        super.onPause();
+        viewModel.setOnPauseRunning(viewModel.isRunning());
+        viewModel.setRunning(false);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    public void onResume() {
+        super.onResume();
+        viewModel.setRunning(viewModel.isOnPauseRunning());
+    }
+
     public void onClickStart(View view) {
         viewModel.setRunning(true);
     }
@@ -55,3 +73,5 @@ public class Stopwatch extends AppCompatActivity {
         viewModel.setTime(0);
     }
 }
+
+
